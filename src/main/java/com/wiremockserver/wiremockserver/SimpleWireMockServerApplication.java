@@ -9,7 +9,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class SimpleWireMockServerApplication {
 
-    private WireMockServer wireMockServer;
+    private final WireMockServer wireMockServer;
 
     private final int PORT = 9000;
 
@@ -24,7 +24,14 @@ public class SimpleWireMockServerApplication {
                         .withBody("{\"id\": 1, \"name\": \"John Doe\"}")));
     }
 
+    public void stopServer() {
+        if (wireMockServer.isRunning()) {
+            wireMockServer.stop();
+        }
+    }
+
     public static void main(String[] args) throws IOException {
-        new SimpleWireMockServerApplication();
+        SimpleWireMockServerApplication app = new SimpleWireMockServerApplication();
+        Runtime.getRuntime().addShutdownHook(new Thread(app::stopServer));
     }
 }
